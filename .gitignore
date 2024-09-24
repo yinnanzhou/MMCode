@@ -1,1 +1,8 @@
-*.pyc
+__pycache__
+.*
+!.gitignore
+*test*
+*.pth
+data
+results
+history

@@ -5,10 +5,10 @@ from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
-from ClassifyFunc.visualization import visualize_predict
+from MMClassifyFunc.visualization import visualize_predict
 
 # 图像目录
-image_dir = r'/home/mambauser/YinnanTest'
+image_dir = r'/home/mambauser/MMCode/data/processed1D'
 
 # 获取图像文件列表
 image_files = [f for f in os.listdir(image_dir) if f.endswith('.png')]
@@ -25,7 +25,7 @@ for file in tqdm(image_files, desc="Processing Images"):
     B = int(parts[1])
     C = int(parts[2])
     D = int(parts[3].split('.')[0])
-    if D in [0,4]:
+    if D in [0,1]:
         labels.append(A)
         # 读取图像并转换为灰度
         image_path = os.path.join(image_dir, file)
