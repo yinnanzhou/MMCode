@@ -18,7 +18,7 @@ samples, labels = get_data(
     # wordIndex=[0,10,11],
     # fileIndex=list(range(38)),
     # personIndex=[0],
-    txIndex=[0,5],
+    txIndex=[0,1],
 )
 
 print("len(samples): {}".format(len(samples)))

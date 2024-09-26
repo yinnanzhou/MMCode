@@ -31,7 +31,7 @@ for file in tqdm(image_files, desc="Processing Images"):
         image_path = os.path.join(image_dir, file)
         image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
         
-        # 调整图像大小以便于处理（假设大小为64x64）
+        # 调整图像大小以便于处理
         image = cv2.resize(image, (256, 256))
         
         # 将图像展平并添加到数据列表
