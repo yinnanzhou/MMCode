@@ -9,12 +9,12 @@ from torchvision import models
 
 from MMClassifyFunc.train import Trainer
 from MMClassifyFunc.models import CustomResNet
-from MMClassifyFunc.data_read import get_data_hdf5, get_data_hdf5_nolog
+from MMClassifyFunc.data_read import get_data
 from MMClassifyFunc.visualization import visualize_results
 
 
 from tqdm import tqdm
-from MMClassifyFunc.data_preprocess import get_loader_hdf5, get_loader_all_hdf5
+from MMClassifyFunc.data_preprocess import get_loader, get_loader_all
 from MMClassifyFunc.visualization import visualize_results, visualize_predict
 
 from sklearn.metrics import confusion_matrix
@@ -22,32 +22,32 @@ from sklearn.metrics import confusion_matrix
 
 confusion_matrices = []
 
-h5_file_path = "/home/mambauser/MMCode/data/stft_1d.h5"
-in_channels = 1
+folder_path = r'/home/mambauser/MMCode/data/processed1D'
+in_channels = 3
 
-samples_train, labels_train = get_data_hdf5(
-    h5_file_path=h5_file_path,
+samples_train, labels_train = get_data(
+    folder_path=folder_path,
     in_channels=in_channels,
-    # wordIndex=[0,10,11],
-    fileIndex=list(range(0, 10)) + list(range(12, 30)) + list(range(32, 40)),
-    # personIndex=[0],
-    txIndex=[0, 1],
+    # wordIndex=list(range(5)),
+    fileIndex=list(range(0,10))+list(range(12,30))+list(range(32,40)),
+    # fileIndex=list(range(0,10))+list(range(30,40)),
+    # fileIndex=list(range(0,40)),
+    # personIndex=[1],
+    txIndex=[0,1],
 )
 
 print("len(samples_train): {}".format(len(samples_train)))
 print("len(set(labels_train)): {}".format(len(set(labels_train))))
 
 
-h5_file_path = "/home/mambauser/MMCode/data/stft_1d.h5"
-in_channels = 1
 
-samples_predict, labels_predict = get_data_hdf5(
-    h5_file_path=h5_file_path,
+samples_predict, labels_predict = get_data(
+    folder_path=folder_path,
     in_channels=in_channels,
-    # wordIndex=[0,10,11],
-    fileIndex=[10, 11, 30, 31],
-    # personIndex=[0],
-    txIndex=[0, 1],
+    # wordIndex=list(range(5)),
+    fileIndex=[10,11,30,31],
+    # personIndex=[1],
+    # txIndex=[0,4,8],
 )
 
 print("len(samples_predict): {}".format(len(samples_predict)))
@@ -56,7 +56,7 @@ print("len(set(labels_train)): {}".format(len(set(labels_train))))
 
 for t in range(30):
 
-    trainloader, testloader = get_loader_hdf5(
+    trainloader, testloader = get_loader(
         samples=samples_train, labels=labels_train
     )
 
@@ -94,7 +94,7 @@ for t in range(30):
     # visualize_results(trainer=trainer)
 
     # Create dataset and dataloader
-    dataloader = get_loader_all_hdf5(samples_predict, labels_predict)
+    dataloader = get_loader_all(samples_predict, labels_predict)
 
     # classifier
     trainer.classifier.eval()
