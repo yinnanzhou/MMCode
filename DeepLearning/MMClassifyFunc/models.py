@@ -79,7 +79,7 @@ class MultiInResNet(nn.Module):
                  num_classes,
                  num_in_convs: list,
                  in_channels: list,
-                 out1_channels: list,
+                 out_channels: list,
                  weights=None,
                  model='resnet18'):
         super(MultiInResNet, self).__init__()
@@ -88,9 +88,9 @@ class MultiInResNet(nn.Module):
         self.in_channels = in_channels
 
         if len(num_in_convs) != num_inputs or len(
-                in_channels) != num_inputs or len(out1_channels) != num_inputs:
+                in_channels) != num_inputs or len(out_channels) != num_inputs:
             raise Exception(
-                'The number of inputs should be consistent with the length of num_in_convs/in_channels/out1_channels.'
+                'The number of inputs should be consistent with the length of num_in_convs/in_channels/out_channels.'
             )
 
         __resnet_opt = ['resnet18', 'resnet34', 'resnet101', 'resnet152']
@@ -115,7 +115,7 @@ class MultiInResNet(nn.Module):
                                        padding=(3, 3),
                                        bias=False)
         elif num_inputs > 1:
-            self.res.conv1 = nn.Conv2d(sum(out1_channels),
+            self.res.conv1 = nn.Conv2d(sum(out_channels),
                                        64,
                                        kernel_size=(7, 7),
                                        stride=(2, 2),
@@ -128,7 +128,7 @@ class MultiInResNet(nn.Module):
                 for _ in range(num_in_convs[i]):
                     self.ins[i].append(
                         BasicConv(in_channels[i],
-                                  out1_channels[i],
+                                  out_channels[i],
                                   kernel_size=3))
                 self.ins[i] = nn.Sequential(*self.ins[i])
         else:

@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 import torch
 import torch.nn as nn
@@ -9,21 +9,21 @@ from torchvision import models
 
 from MMClassifyFunc.train import Trainer
 from MMClassifyFunc.models import CustomResNet
-from MMClassifyFunc.data_read import get_data_hdf5, get_data_hdf5_nolog
+from MMClassifyFunc.data_read import get_data_hdf5
 from MMClassifyFunc.visualization import visualize_results
 
 
 from tqdm import tqdm
-from MMClassifyFunc.data_preprocess import get_loader_hdf5, get_loader_all_hdf5
+from MMClassifyFunc.data_preprocess import get_loader, get_loader_all
 from MMClassifyFunc.visualization import visualize_results, visualize_predict
 
 from sklearn.metrics import confusion_matrix
 
-
 confusion_matrices = []
 
-h5_file_path = "/home/mambauser/MMCode/data/stft_1d.h5"
-in_channels = 1
+h5_file_path = "/home/mambauser/MMCode/data/stft_3d.h5"
+readType = "abs"
+in_channels = 3 if readType == "pic" else 1
 
 samples_train, labels_train = get_data_hdf5(
     h5_file_path=h5_file_path,
@@ -32,14 +32,13 @@ samples_train, labels_train = get_data_hdf5(
     fileIndex=list(range(0, 10)) + list(range(12, 30)) + list(range(32, 40)),
     # personIndex=[0],
     txIndex=[0, 1],
+    readType=readType,
 )
 
 print("len(samples_train): {}".format(len(samples_train)))
 print("len(set(labels_train)): {}".format(len(set(labels_train))))
 
 
-h5_file_path = "/home/mambauser/MMCode/data/stft_1d.h5"
-in_channels = 1
 
 samples_predict, labels_predict = get_data_hdf5(
     h5_file_path=h5_file_path,
@@ -48,17 +47,16 @@ samples_predict, labels_predict = get_data_hdf5(
     fileIndex=[10, 11, 30, 31],
     # personIndex=[0],
     txIndex=[0, 1],
+    readType=readType,
 )
 
 print("len(samples_predict): {}".format(len(samples_predict)))
 print("len(set(labels_train)): {}".format(len(set(labels_train))))
 
 
-for t in range(30):
+for t in range(50):
 
-    trainloader, testloader = get_loader_hdf5(
-        samples=samples_train, labels=labels_train
-    )
+    trainloader, testloader = get_loader(samples=samples_train, labels=labels_train)
 
     # classifier
     classifier = CustomResNet(
@@ -94,7 +92,7 @@ for t in range(30):
     # visualize_results(trainer=trainer)
 
     # Create dataset and dataloader
-    dataloader = get_loader_all_hdf5(samples_predict, labels_predict)
+    dataloader = get_loader_all(samples_predict, labels_predict)
 
     # classifier
     trainer.classifier.eval()
@@ -125,10 +123,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 sum_matrix = np.zeros((48, 48), dtype=int)
+max_accuracy = 0
 
 # 遍历每个矩阵并进行相加
 for matrix in confusion_matrices:
-    sum_matrix += matrix
+    if matrix.size == 48 * 48:
+        sum_matrix += matrix
+        max_accuracy = max(max_accuracy, np.trace(matrix) / matrix.sum())
 
 plt.figure(figsize=(30, 20))
 
@@ -140,8 +141,10 @@ sns.heatmap(
     cbar=False,
 )
 accuracy = np.trace(sum_matrix) / sum_matrix.sum()
-plt.title("Predict accuracy: {:.2%}".format(accuracy))
+plt.title(
+    "Average accuracy: {:.2%}, Max accuracy:{:.2%}".format(accuracy, max_accuracy)
+)
 plt.xlabel("Predicted label")
 plt.ylabel("True label")
 
-plt.show()
+plt.savefig("MMCode_abs_3d.png", format="png")

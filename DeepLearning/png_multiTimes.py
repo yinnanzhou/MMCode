@@ -9,7 +9,7 @@ from torchvision import models
 
 from MMClassifyFunc.train import Trainer
 from MMClassifyFunc.models import CustomResNet
-from MMClassifyFunc.data_read import get_data
+from MMClassifyFunc.data_read import get_data_png
 from MMClassifyFunc.visualization import visualize_results
 
 
@@ -25,7 +25,7 @@ confusion_matrices = []
 folder_path = r'/home/mambauser/MMCode/data/processed1D'
 in_channels = 3
 
-samples_train, labels_train = get_data(
+samples_train, labels_train = get_data_png(
     folder_path=folder_path,
     in_channels=in_channels,
     # wordIndex=list(range(5)),
@@ -41,7 +41,7 @@ print("len(set(labels_train)): {}".format(len(set(labels_train))))
 
 
 
-samples_predict, labels_predict = get_data(
+samples_predict, labels_predict = get_data_png(
     folder_path=folder_path,
     in_channels=in_channels,
     # wordIndex=list(range(5)),

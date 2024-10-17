@@ -18,7 +18,7 @@ window_size = 96
 overlap = 0.7
 
 # 原始数据路径
-bin_path = r"/home/mambauser/MMCode/data/rawData/29_1_Raw_0.bin"
+bin_path = r"/home/mambauser/MMCode/data/rawData/0_0_Raw_0.bin"
 
 # 获取bin文件数据
 data_raw = MMGenerateFunctions.getRawData_multiTx(
